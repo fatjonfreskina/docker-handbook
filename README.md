@@ -3,13 +3,13 @@
 ## Commands
 
 - `docker <object> <command> <options>`. *Object* can be container, image, network, volume. *Command* is the task (example run). *Options* override the default behavior.
-- `docker run <image name>`. (Short for docker container run <image name>)
-- `docker container stop <docker-container-identifier>`
-- `docker container ls --all`
-- `docker container rm <container identifier>` (remove dangling containers)
-- `docker images`: get list of images
-- `docker ps -a`: get the containers that are currently running or have run in the past
-- `docker exec -it <mycontainerid> bash`: get a bash in the container
+- `docker run <image name>`. (Short for docker container run <image name>)`
+- `docker container stop <docker-container-identifier>`.
+- `docker container ls --all`.
+- `docker container rm <container identifier>` (remove dangling containers).
+- `docker images`: get list of images.
+- `docker ps -a`: get the containers that are currently running or have run in the past.
+- `docker exec -it <mycontainerid> bash`: get a bash in the container.
 - (on Linux)`uname -a`: get info about the kernel
 - `docker container run --rm -it ubuntu` (interactive mode: -i interactive, -t formatting..) (--rm clears the container after stopping it)
 
@@ -94,5 +94,8 @@ These images are designed to behave like executable programs. Example: **rmbyext
 You can either install python and the script or run it from a container: The fhsinchy/rmbyext image behaves in a similar manner. This image contains a copy of the rmbyext script and is configured to run the script on a directory /zone inside the container.
   
 Now the problem is that containers are isolated from your local system, so the rmbyext program running inside the container doesn't have any access to your local file system. So, if somehow you can map the local directory containing the pdf files to the /zone directory inside the container, the files should be accessible to the container. One way to grant a container direct access to your local file system is by using `bind mounts`:
-- `docker container run --rm -v $(pwd):/zone fhsinchy/rmbyext pdf`
-The -v $(pwd):/zone part in the command, is used for creating a bind mount for a container.  
+  
+- `docker container run --rm -v ${pwd}:/zone fhsinchy/rmbyext pdf`. Binds your current directory to the /zone directory in the container (where the script is,then you pass the container-image id AND the name of the script)
+  
+The -v $(pwd):/zone part in the command, is used for creating a bind mount for a container. The structure of the command is: `--volume <local file system directory absolute path>:<container file system directory absolute path>`
+  

@@ -2,15 +2,15 @@
 
 ## Commands
 
-- `docker run <docker-image/container>`
-- `docker stop <docker-container-id>`
-
+- `docker <object> <command> <options>`. *Object* can be container, image, network, volume. *Command* is the task (example run). *Options* override the default behavior.
+- `docker run <image name>`. (Short for docker container run <image name>)
+- `docker container stop <docker-container-identifier>`
+- `docker container ls --all`
+- `docker container rm <container identifier>` (remove dangling containers)
 - `docker images`: get list of images
 - `docker ps -a`: get the containers that are currently running or have run in the past
 - `docker exec -it <mycontainerid> bash`: get a bash in the container
-- (works on Linux)`uname -a`: get info about the kernel
-
-
+- (on Linux)`uname -a`: get info about the kernel
 
 ## Definitions
 
@@ -40,3 +40,40 @@ According to the documentation:
 4. The daemon then reaches out to the default public registry which is Docker Hub and pulls in the latest copy of the hello-world image, indicated by the latest: Pulling from library/hello-world line in your terminal.
 5. Docker daemon then creates a new container from the freshly pulled image.
 6. Finally Docker daemon runs the container created using the hello-world image outputting the wall of text on your terminal.
+
+## Container Manipulation Basics
+
+### How to Publish a Port
+
+Containers are isolated environments. Your host system doesn't know anything about what's going on inside a container. Hence, applications running inside a container remain inaccessible from the outside. To allow access from outside of a container, you must publish the appropriate port inside the container to a port on your local network. The common syntax for the --publish or -p option is as follows: `docker container run --publish 8080:80 <image name>`.
+
+**When you wrote --publish 8080:80 in the previous sub-section, it meant any request sent to port 8080 of your host system will be forwarded to port 80 inside the container‌.**
+
+### How to Use Detached Mode
+
+By default, containers run in the foreground and attach themselves to the terminal like any other normal program invoked from the terminal.
+In order to override this behavior and keep a container running in background, you can include the --detach option with the run command as follows: `docker container run --detach --publish 8080:80 fhsinchy/hello-dock`.
+
+**One thing that you have to keep in mind in case of the run command is that the image name must come last. If you put anything after the image name then that'll be passed as an argument to the container entry-point**
+
+### Naming a container
+
+Use the `name` option to name the container as you wish
+
+`docker container run --detach --publish 8888:80 --name hello-dock-container fhsinchy/hello-dock`.
+
+## Create a container without running
+
+The container run command is in reality a combination of two separate commands. These commands are as follows:
+
+- `container create` command creates a container from a given image.
+- `container start` command starts a container that has been already created.
+
+For example: `docker container create --publish 8080:80 fhsinchy/hello-dock` and then `docker container start hello-dock`
+
+### How to Remove Dangling Containers
+
+Containers that have been stopped or killed remain in the system. These dangling containers can take up space or can conflict with newer containers.
+Use : `docker container rm <container identifier>`; or you can use `docker container prune` to clear all dangling containers
+
+

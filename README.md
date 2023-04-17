@@ -11,8 +11,9 @@
 - `docker ps -a`: get the containers that are currently running or have run in the past
 - `docker exec -it <mycontainerid> bash`: get a bash in the container
 - (on Linux)`uname -a`: get info about the kernel
+- `docker container run --rm -it ubuntu` (interactive mode: -i interactive, -t formatting..) (--rm clears the container after stopping it)
 
-## Definitions
+## Introduction
 
 - `Container` : A container is an abstraction at the application layer that packages code and dependencies together. Instead of virtualizing the entire physical machine, containers virtualize the host operating system only.
 
@@ -20,7 +21,7 @@
 
 - `Docker Registry`: An image registry is a centralized place where you can upload your images and can also download images created by others. Docker Hub is the default public registry for Docker. You can share any number of public images on Docker Hub for free. People around the world will be able to download them and use them freely. Apart from Docker Hub or Quay, you can also create your own image registry for hosting private images.
 
-## Docker as a Software
+### Docker as a Software
 
 - **Docker Daemon**: The daemon (dockerd) is a process that keeps running in the background and waits for commands from the client. The daemon is capable of managing various Docker objects.
 
@@ -62,7 +63,7 @@ Use the `name` option to name the container as you wish
 
 `docker container run --detach --publish 8888:80 --name hello-dock-container fhsinchy/hello-dock`.
 
-## Create a container without running
+### Create a container without running
 
 The container run command is in reality a combination of two separate commands. These commands are as follows:
 
@@ -73,7 +74,25 @@ For example: `docker container create --publish 8080:80 fhsinchy/hello-dock` and
 
 ### How to Remove Dangling Containers
 
-Containers that have been stopped or killed remain in the system. These dangling containers can take up space or can conflict with newer containers.
-Use : `docker container rm <container identifier>`; or you can use `docker container prune` to clear all dangling containers
+Containers that have been stopped or killed remain in the system. These dangling containers can take up space or can conflict with newer containers. Use : `docker container rm <container identifier>`; or you can use `docker container prune` to clear all dangling containers.
 
+### How to Run a Container in Interactive Mode
+  
+Popular distributions such as Ubuntu, Fedora, and Debian all have official Docker images available in the hub. Programming languages such as python, php, go or run-times like node and deno all have their official images.
 
+These images do not just run some pre-configured program. These are instead configured to run a shell by default. In case of the operating system images it can be something like sh or bash and in case of the programming languages or run-times, it is usually their default language shell.
+  
+Use te --it flag to run the container in interactive mode: `docker container run --rm -it ubuntu`
+  
+### Run a command inside a container (from the outside)
+  
+- `docker container run <image name> <command>`
+
+### Executable Images
+  
+These images are designed to behave like executable programs. Example: **rmbyext** project: remove files in dir by extension script. 
+You can either install python and the script or run it from a container: The fhsinchy/rmbyext image behaves in a similar manner. This image contains a copy of the rmbyext script and is configured to run the script on a directory /zone inside the container.
+  
+Now the problem is that containers are isolated from your local system, so the rmbyext program running inside the container doesn't have any access to your local file system. So, if somehow you can map the local directory containing the pdf files to the /zone directory inside the container, the files should be accessible to the container. One way to grant a container direct access to your local file system is by using `bind mounts`:
+- `docker container run --rm -v $(pwd):/zone fhsinchy/rmbyext pdf`
+The -v $(pwd):/zone part in the command, is used for creating a bind mount for a container.  

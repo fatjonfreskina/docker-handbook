@@ -99,3 +99,41 @@ Now the problem is that containers are isolated from your local system, so the r
   
 The -v $(pwd):/zone part in the command, is used for creating a bind mount for a container. The structure of the command is: `--volume <local file system directory absolute path>:<container file system directory absolute path>`
   
+## Docker Image Manipulation Basics
+
+```docker
+FROM ubuntu:latest
+
+EXPOSE 80
+
+RUN apt-get update && \
+    apt-get install nginx -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+- Every valid Dockerfile starts with a FROM instruction. This instruction sets the base image for your resultant image.
+- The RUN instruction in a Dockerfile executes a command inside the container shell
+- Finally the CMD instruction sets the default command for your image. 
+
+RUN is an image build step, the state of the container after a RUN command will be committed to the container image. A Dockerfile can have many RUN steps that layer on top of one another to build the image. CMD is the command the container executes by default when you launch the built image.
+
+To build the image from the Dockerfile: `docker image build .`
+
+### Custom tag Docker images
+
+Just like containers, you can assign custom identifiers to your images instead of relying on the randomly generated ID.
+
+- `--tag <image repository>:<image tag>`
+
+The repository is usually known as the image name and the tag indicates a certain build or version.
+
+### How to Understand the Many Layers of a Docker Image
+
+To visualize the many layers of an image, you can use the `docker image history <id>` command.
+
+When you start a container using an image, you get a new writable layer on top of the other layers.
+
+Docker can avoid data duplication and can use previously created layers as a cache for later builds. This results in compact, efficient images that can be used everywhere.
+
+### How to Optimize Docker Images

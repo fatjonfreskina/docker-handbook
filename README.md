@@ -137,3 +137,63 @@ When you start a container using an image, you get a new writable layer on top o
 Docker can avoid data duplication and can use previously created layers as a cache for later builds. This results in compact, efficient images that can be used everywhere.
 
 ### How to Optimize Docker Images
+
+- Check the size
+- Do not keep unnecessary stuff
+
+About the `RUN` command : "You may ask why am I doing so much work in a single RUN instruction instead of nicely splitting them into multiple instructions like we did previously. Well, splitting them up would be a mistake. If you install packages and then remove them in separate RUN instructions, they'll live in separate layers of the image". So think about layers!
+
+### Embracing Alpine Linux
+
+Alpine Linux is a full-featured Linux distribution like Ubuntu, Debian or Fedora. But the good thing about Alpine is that it's built around musl libc and busybox and is lightweight. Where the latest ubuntu image weighs at around 28MB, alpine is 2.8MB.
+
+Example, recreating the custom-nginx image using the Alpine image as its base:
+
+```docker
+FROM alpine:latest
+
+EXPOSE 80
+
+ARG FILENAME="nginx-1.19.2"
+ARG EXTENSION="tar.gz"
+
+ADD https://nginx.org/download/${FILENAME}.${EXTENSION} .
+
+RUN apk add --no-cache pcre zlib && \
+    apk add --no-cache \
+            --virtual .build-deps \
+            build-base \ 
+            pcre-dev \
+            zlib-dev \
+            openssl-dev && \
+    tar -xvf ${FILENAME}.${EXTENSION} && rm ${FILENAME}.${EXTENSION} && \
+    cd ${FILENAME} && \
+    ./configure \
+        --sbin-path=/usr/bin/nginx \
+        --conf-path=/etc/nginx/nginx.conf \
+        --error-log-path=/var/log/nginx/error.log \
+        --http-log-path=/var/log/nginx/access.log \
+        --with-pcre \
+        --pid-path=/var/run/nginx.pid \
+        --with-http_ssl_module && \
+    make && make install && \
+    cd / && rm -rfv /${FILENAME} && \
+    apk del .build-deps
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+Some notes:
+- instead of apt-get install -> apd add
+- no-cache meant that the downloaded package won't be cached.
+- apt-get remove -> apk del
+
+### Executable Docker Images
+
+Steps:
+- Get a good base image for running Python scripts, like python.
+- Set-up the working directory to an easily accessible directory.
+- Install Git so that the script can be installed from my GitHub repository.
+- Install the script using Git and pip.
+- Get rid of the build's unnecessary packages.
+- Set the script as the entry-point for this image.

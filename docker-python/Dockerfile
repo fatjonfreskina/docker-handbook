@@ -1,6 +1,11 @@
-FROM python:3
-ADD requirements.txt /
-RUN pip install -r requirements.txt
-ADD main.py /
-EXPOSE 9090
-CMD [ "python", "./main.py" ]
+FROM python:3-alpine
+
+WORKDIR /zone
+
+# Change the GitHub link to another one if you need
+
+RUN apk add --no-cache git && \
+    pip install git+https://github.com/fhsinchy/rmbyext.git#egg=rmbyext && \ 
+    apk del git
+
+ENTRYPOINT [ "rmbyext" ]

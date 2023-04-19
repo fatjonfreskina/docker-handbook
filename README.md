@@ -182,7 +182,7 @@ RUN apk add --no-cache pcre zlib && \
 
 CMD ["nginx", "-g", "daemon off;"]
 ```
-
+  
 Some notes:
 - instead of apt-get install -> apd add
 - no-cache meant that the downloaded package won't be cached.
@@ -197,3 +197,11 @@ Steps:
 - Install the script using Git and pip.
 - Get rid of the build's unnecessary packages.
 - Set the script as the entry-point for this image.
+
+I will use this as an example:
+  
+https://github.com/fatjonfreskina/docker-handbook/blob/9eb761ee689a744d935093d75035f52a97b3decc/docker-python/Dockerfile#L1-L11
+  
+And run `docker image build --tag <tag-name> .`
+  
+### How to Share Your Docker Images Online

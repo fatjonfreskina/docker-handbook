@@ -200,8 +200,9 @@ Steps:
 
 I will use this as an example:
   
-https://github.com/fatjonfreskina/docker-handbook/blob/9eb761ee689a744d935093d75035f52a97b3decc/docker-python/Dockerfile#L1-L11
+https://github.com/fatjonfreskina/docker-handbook/blob/f291db21e53c14903913421ca3435e5d067a81a7/docker-python/Dockerfile#L1-L9
   
 And run `docker image build --tag <tag-name> .`
+Finally `docker container run <tag-name>` should do the work 👍
   
 ### How to Share Your Docker Images Online

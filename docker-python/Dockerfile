@@ -7,3 +7,5 @@ WORKDIR /zone
 RUN pip install git+https://github.com/fatjonfreskina/test-script-python-setup 
    
 ENTRYPOINT [ "test" ]
+
+# This works fine!

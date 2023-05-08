@@ -206,3 +206,63 @@ And run `docker image build --tag <tag-name> .`
 Finally `docker container run <tag-name>` should do the work 👍
   
 ### How to Share Your Docker Images Online
+
+In order to share an image online, the image has to be tagged. You've already learned about tagging in a previous sub-section. Just to refresh your memory, the generic syntax for the --tag or -t option is as follows:
+`--tag <image repository>:<image tag>`
+Example:
+`docker image build --tag fhsinchy/custom-nginx:latest --file Dockerfile.built .` In this command the fhsinchy/custom-nginx is the image repository and latest is the tag. The image name can be anything you want and can not be changed once you've uploaded the image. The tag can be changed whenever you want and usually reflects the version of the software or different kind of builds.
+
+## How to containerize a Javascript Application
+
+### Development Dockerfile
+
+Steps:
+- Get a good base image for running JavaScript applications, like node.
+- Set the default working directory inside the image.
+- Copy the package.json file into the image.
+- Install necessary dependencies.
+- Copy the rest of the project files.
+- Start the vite development server by executing npm run dev command.
+
+Example Dockerfile.dev (A Dockerfile.dev, on the other hand, is a Dockerfile that is specifically designed for development environments. It typically includes additional tools and configurations that are not necessary in production, such as debugging tools and development dependencies.):
+```docker
+FROM node:lts-alpine
+
+EXPOSE 3000
+
+USER node
+
+RUN mkdir -p /home/node/app
+
+WORKDIR /home/node/app
+
+COPY ./package.json .
+RUN npm install
+
+COPY . .
+
+CMD [ "npm", "run", "dev" ]
+```
+
+Notes:
+- The USER instruction sets the default user for the image to node. By default Docker runs containers as the root user. But according to Docker and Node.js Best Practices this can pose a security threat. The node image comes with a non-root user named node which you can set as the default user using the USER instruction.
+- The COPY instruction here copies the package.json file which contains information regarding all the necessary dependencies for this application. 
+- The second COPY instruction copies the rest of the content from the current directory (.) of the host filesystem to the working directory (.) inside the image.
+
+Now, to build an image from this Dockerfile.dev you can execute the following command: `docker image build --file Dockerfile.dev --tag hello-dock:dev .` Given the filename is not Dockerfile you have to explicitly pass the filename using the --file option.
+A container can be run using this image by executing the following command:
+```
+docker container run \
+    --rm \
+    --detach \
+    --publish 3000:3000 \
+    --name hello-dock-dev \
+    hello-dock:dev
+```
+
+### Bind Mounts
+
+Example usage: hot reload front-end applications. You edit the source code from your filesystem, the code is run inside the container. You need to bind them somehow.
+
+## Network Manipulation Basics
+

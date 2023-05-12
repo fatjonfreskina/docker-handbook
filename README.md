@@ -2,7 +2,6 @@
 
 ## Commands
 
-- `docker <object> <command> <options>`. *Object* can be container, image, network, volume. *Command* is the task (example run). *Options* override the default behavior.
 - `docker run <image name>`. (Short for docker container run <image name>)`
 - `docker container stop <docker-container-identifier>`.
 - `docker container ls --all`.
@@ -10,7 +9,6 @@
 - `docker images`: get list of images.
 - `docker ps -a`: get the containers that are currently running or have run in the past.
 - `docker exec -it <mycontainerid> bash`: get a bash in the container.
-- (on Linux)`uname -a`: get info about the kernel
 - `docker container run --rm -it ubuntu` (interactive mode: -i interactive, -t formatting..) (--rm clears the container after stopping it)
 
 ## Introduction

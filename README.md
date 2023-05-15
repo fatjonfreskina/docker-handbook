@@ -264,3 +264,15 @@ Example usage: hot reload front-end applications. You edit the source code from 
 
 ## Network Manipulation Basics
 
+- You can easily get the IP address by executing the following command: `docker container inspect --format='{{range .NetworkSettings.Networks}} {{.IPAddress}} {{end}}' <container-name>`
+  
+- To list out the networks in your system: `docker network ls`
+  
+As you can see, Docker comes with a default bridge network named bridge.
+  
+User-defined bridges provide: automatic DNS resolution between containers, better isolation, can be attached and detached on the fly.
+  
+- To create a network with the name skynet execute the following command: `docker network create skynet`
+  
+- To attach a container to a network: `docker network (dis)connect <network identifier> <container identifier>`. To get the identifier of the network, run docker network ls.
+- Or: `docker container run --network <net-name> --name <container-name> -it `

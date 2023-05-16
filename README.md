@@ -276,3 +276,49 @@ User-defined bridges provide: automatic DNS resolution between containers, bette
   
 - To attach a container to a network: `docker network (dis)connect <network identifier> <container identifier>`. To get the identifier of the network, run docker network ls.
 - Or: `docker container run --network <net-name> --name <container-name> -it `
+  
+## Docker compose command
+
+> Compose is a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application’s services. Then, with a single command, you create and start all the services from your configuration.
+  
+Although Compose works in all environments, it's more focused on development and testing. Using Compose on a production environment is not recommended at all.
+  
+Just like the Docker daemon uses a Dockerfile for building images, Docker Compose uses a `docker-compose.yaml` file to read service definitions from.
+  
+```yaml
+version: "3.8"
+
+services: 
+    db:
+        image: postgres:12
+        container_name: notes-db-dev
+        volumes: 
+            - notes-db-dev-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: notesdb
+            POSTGRES_PASSWORD: secret
+    api:
+        build:
+            context: ./api
+            dockerfile: Dockerfile.dev
+        image: notes-api:dev
+        container_name: notes-api-dev
+        environment: 
+            DB_HOST: db ## same as the database service name
+            DB_DATABASE: notesdb
+            DB_PASSWORD: secret
+        volumes: 
+            - /home/node/app/node_modules
+            - ./api:/home/node/app
+        ports: 
+            - 3000:3000
+
+volumes:
+    notes-db-dev-data:
+        name: notes-db-dev-data
+```
+  
+- The services block holds the definitions for each of the services or containers in the application. db and api are the two services that comprise this project.
+- The db block defines a new service in the application and holds necessary information to start the container. Every service requires either a pre-built image or a Dockerfile to run a container. For the db service we're using the official PostgreSQL image.
+- Unlike the db service, a pre-built image for the api service doesn't exist. So we'll use the Dockerfile.dev file.
+- The volumes block defines any name volume needed by any of the services. At the time it only enlists notes-db-dev-data volume used by the db service.
